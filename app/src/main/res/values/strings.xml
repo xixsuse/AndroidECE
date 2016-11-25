@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Test-Boussole</string>
+    <string name="btnDroite">Droite</string>
+    <string name="btnGauche">Gauche</string>
+</resources>
