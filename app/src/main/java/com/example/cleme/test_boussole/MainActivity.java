@@ -14,7 +14,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-
+import extremzhick3r.R;
 
 public class MainActivity extends AppCompatActivity implements LocationListener {
 
@@ -32,11 +32,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        buttonGauche = (Button) findViewById(R.id.buttonGauche);
-        buttonDroite = (Button) findViewById(R.id.buttonDroite);
         boussole = (ImageView) findViewById(R.id.boussoleImage);
-        latitude = (TextView) findViewById(R.id.textViewLatitude);
-        longitude = (TextView) findViewById(R.id.textViewLongitude);
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
         buttonGauche.setOnClickListener(buttonListenerGauche);
