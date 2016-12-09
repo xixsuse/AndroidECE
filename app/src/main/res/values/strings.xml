@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">Extremz Hick3r</string>
-    <string name="title_activity_maps">Map</string>
+    <string name="app_comment">Hiking for the winnerz</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_maps">MapsActivity</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="title_activity_compass">CompassActivity</string>
 </resources>
