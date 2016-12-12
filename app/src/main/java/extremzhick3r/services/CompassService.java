@@ -20,8 +20,6 @@ public class CompassService extends Service  implements SensorEventListener {
     public static final String AZIMUTH = "AZIMUTH";
 
     private SensorManager sensorManager = null;
-    private ImageView compass;
-    private Toolbar toolbar;
 
     private final float[] mAccelerometerReading = new float[3];
     private final float[] mMagnetometerReading = new float[3];

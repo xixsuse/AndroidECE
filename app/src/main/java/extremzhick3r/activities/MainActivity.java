@@ -20,6 +20,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import java.util.ArrayList;
 import extremzhick3r.R;
+import extremzhick3r.fragment.AltimeterFragment;
 import extremzhick3r.fragment.CompassFragment;
 import extremzhick3r.fragment.MapsFragment;
 
@@ -149,6 +150,10 @@ public class MainActivity extends AppCompatActivity {
 
             case "Map":
                 fragment = new MapsFragment();
+                break;
+
+            case "Altimeter":
+                fragment = new AltimeterFragment();
                 break;
 
             default:
