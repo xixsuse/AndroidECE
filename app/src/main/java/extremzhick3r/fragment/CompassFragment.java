@@ -42,20 +42,25 @@ public class CompassFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
 
+        return inflater.inflate(R.layout.fragment_compass, container, false);
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
         this.getActivity().registerReceiver(receiver, new IntentFilter(
                 CompassService.SERVICE));
 
         compassIntent = new Intent(this.getActivity(), CompassService.class);
         this.getActivity().startService(compassIntent);
-
-        return inflater.inflate(R.layout.fragment_compass, container, false);
     }
 
     @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-
+    public void onDetach() {
+        super.onDetach();
+        this.getActivity().unregisterReceiver(receiver);
         this.getActivity().stopService(compassIntent);
+
     }
 
 }

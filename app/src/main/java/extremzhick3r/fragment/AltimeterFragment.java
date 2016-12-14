@@ -55,7 +55,7 @@ public class AltimeterFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-
+        this.getActivity().unregisterReceiver(receiver);
         this.getActivity().stopService(altimeterIntent);
     }
 }

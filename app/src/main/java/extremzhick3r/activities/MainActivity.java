@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import extremzhick3r.R;
 import extremzhick3r.fragment.AltimeterFragment;
 import extremzhick3r.fragment.CompassFragment;
+import extremzhick3r.fragment.HomeFragment;
 import extremzhick3r.fragment.MapsFragment;
 
 class NavItem {
@@ -137,6 +138,8 @@ public class MainActivity extends AppCompatActivity {
                 Log.d("LOG_TAG", "navigation clicked");
             }
         });
+
+        selectItemFromDrawer(0);
     }
 
     private void selectItemFromDrawer(int position) {
@@ -155,6 +158,10 @@ public class MainActivity extends AppCompatActivity {
 
             case "Altimeter":
                 fragment = new AltimeterFragment();
+                break;
+
+            case "Home":
+                fragment = new HomeFragment();
                 break;
 
             default:
