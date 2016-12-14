@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,8 +33,8 @@ public class AltimeterFragment extends Fragment {
             Bundle b = intent.getExtras();
 
             if(b != null) {
-                TextView textAltitude = (TextView) AltimeterFragment.this.getActivity().findViewById(R.id.textViewAltimeter);
-                textAltitude.setText("Altitude is "+b.getFloat(AltimeterService.ALTIMETER));
+                TextView textAltitude = (TextView) AltimeterFragment.this.getActivity().findViewById(R.id.altitude);
+                textAltitude.setText(Integer.toString((int) b.getFloat(AltimeterService.ALTIMETER)));
             }
         }
     };

@@ -31,7 +31,7 @@ public class CompassFragment extends Fragment {
 
             if(b != null) {
                 ImageView compass = (ImageView) CompassFragment.this.getActivity().findViewById(R.id.compass_image);
-                compass.setRotation(b.getFloat(CompassService.AZIMUTH));
+                compass.setRotation(((int)b.getFloat(CompassService.AZIMUTH)/5)*5);
             }
         }
     };

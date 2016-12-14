@@ -19,6 +19,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import java.util.ArrayList;
+
 import extremzhick3r.R;
 import extremzhick3r.fragment.AltimeterFragment;
 import extremzhick3r.fragment.CompassFragment;

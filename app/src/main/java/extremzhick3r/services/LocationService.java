@@ -2,13 +2,8 @@ package extremzhick3r.services;
 
 import android.Manifest;
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
-import android.hardware.SensorManager;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -18,44 +13,35 @@ import android.support.v4.app.ActivityCompat;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationListener;
 
-public class AltimeterService extends Service implements SensorEventListener, LocationListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+public class LocationService extends Service implements LocationListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     //variables
-    public static final String SERVICE = "extremzhick3r.altimeter";
-    public static final String ALTIMETER = "ALTIMETER";
-
-    private SensorManager sensorManager = null;
-    private Sensor sensorAlt = null;
+    public static final String SERVICE = "extremzhick3r.location";
+    public static final String LATITUDE = "LATITUDE";
+    public static final String LONGITUDE = "LONGITUDE";
 
     GoogleApiClient googleApiClient;
     LocationRequest locationRequest;
 
-    public AltimeterService() {}
+    public LocationService() {
+    }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        // Create sensor managers
-        sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-
-        sensorAlt = sensorManager.getDefaultSensor(Sensor.TYPE_PRESSURE);
-        if(sensorAlt != null)
-            sensorManager.registerListener(this, sensorAlt, SensorManager.SENSOR_DELAY_UI);
-        else {
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                    && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                // TODO: Consider calling requestPermissions
-            } else {
-                googleApiClient = new GoogleApiClient.Builder(this)
-                        .addConnectionCallbacks(this)
-                        .addOnConnectionFailedListener(this)
-                        .addApi(LocationServices.API)
-                        .build();
-                googleApiClient.connect();
-            }
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling requestPermissions
+        } else {
+            googleApiClient = new GoogleApiClient.Builder(this)
+                    .addConnectionCallbacks(this)
+                    .addOnConnectionFailedListener(this)
+                    .addApi(LocationServices.API)
+                    .build();
+            googleApiClient.connect();
         }
 
         return Service.START_STICKY;
@@ -74,24 +60,15 @@ public class AltimeterService extends Service implements SensorEventListener, Lo
         throw new UnsupportedOperationException("Not yet implemented");
     }
 
-    @Override public void onAccuracyChanged(Sensor sensor, int accuracy) {}
-
-    @Override
-    public void onSensorChanged(SensorEvent se) {
-        float altitude = sensorManager.getAltitude(SensorManager.PRESSURE_STANDARD_ATMOSPHERE, se.values[0]);
-
-        publishResults(altitude);
-    }
-
-
     @Override
     public void onLocationChanged(Location location) {
-        publishResults((float) location.getAltitude());
+        publishResults((float) location.getLatitude(), (float) location.getLongitude());
     }
 
-    private void publishResults(float altitude) {
+    private void publishResults(float latitude, float longitude) {
         Intent intent = new Intent(SERVICE);
-        intent.putExtra(ALTIMETER, altitude);
+        intent.putExtra(LATITUDE, latitude);
+        intent.putExtra(LONGITUDE, longitude);
         sendBroadcast(intent);
     }
 

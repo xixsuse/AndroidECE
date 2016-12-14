@@ -13,8 +13,6 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.widget.ImageView;
 
-import extremzhick3r.R;
-
 public class CompassService extends Service  implements SensorEventListener {
     public static final String SERVICE = "extremzhick3r.compass";
     public static final String AZIMUTH = "AZIMUTH";
