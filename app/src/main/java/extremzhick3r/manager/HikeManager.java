@@ -20,11 +20,14 @@ import java.util.Date;
 public class HikeManager {
     static final String FILENAME = "hikemanager";
     JSONObject hikes;
+    long lastTime, interval;
 
-    public HikeManager() {
+    public HikeManager(long interval) {
         try {
             String date = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
             hikes = new JSONObject("{date:'"+date+"',hikes:[]}");
+            lastTime = 0;
+            this.interval = interval;
         }
         catch (JSONException e) { e.printStackTrace(); }
     }
@@ -64,6 +67,9 @@ public class HikeManager {
 
     public void addHikePoint(double lat, double lng){
         try {
+            if(System.currentTimeMillis() - lastTime < interval)
+                return;
+
             JSONArray manager = hikes.getJSONArray("hikes");
             Double[] coord = new Double[]{lat,lng};
 
@@ -72,5 +78,18 @@ public class HikeManager {
             manager.getJSONArray(0).put(new JSONArray(coord));
         }
         catch (JSONException e) { e.printStackTrace(); }
+    }
+
+    public JSONArray getPoints() {
+        JSONArray array;
+        try {
+            array = hikes.getJSONArray("hikes").getJSONArray(0);
+        }
+        catch (JSONException e) {
+            array = new JSONArray();
+            e.printStackTrace();
+        }
+
+        return array;
     }
 }

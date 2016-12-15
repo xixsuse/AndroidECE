@@ -2,15 +2,19 @@ package extremzhick3r.activities;
 
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.BroadcastReceiver;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +32,7 @@ import extremzhick3r.fragment.CompassFragment;
 import extremzhick3r.fragment.HomeFragment;
 import extremzhick3r.fragment.MapsFragment;
 import extremzhick3r.manager.HikeManager;
+import extremzhick3r.services.LocationService;
 
 class NavItem {
     String title;
@@ -72,7 +77,7 @@ class DrawerListAdapter extends BaseAdapter {
 
         if (convertView == null) {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            view = inflater.inflate(R.layout.drawer_item, null);
+            view = inflater.inflate(R.layout.item_drawer, null);
         }
         else {
             view = convertView;
@@ -81,6 +86,55 @@ class DrawerListAdapter extends BaseAdapter {
         TextView titleView = (TextView) view.findViewById(R.id.drawer_list_title);
         TextView subtitleView = (TextView) view.findViewById(R.id.drawer_list_subtitle);
         ImageView iconView = (ImageView) view.findViewById(R.id.drawer_list_icon);
+
+        titleView.setText(navItems.get(position).title);
+        subtitleView.setText(navItems.get(position).subtitle);
+        iconView.setImageResource(navItems.get(position).icon);
+
+        return view;
+    }
+}
+
+class HikeListAdapter extends BaseAdapter {
+
+    private Context context;
+    private ArrayList<NavItem> navItems;
+
+    public HikeListAdapter(Context context, ArrayList<NavItem> navItems) {
+        this.context = context;
+        this.navItems = navItems;
+    }
+
+    @Override
+    public int getCount() {
+        return navItems.size();
+    }
+
+    @Override
+    public Object getItem(int position) {
+        return navItems.get(position);
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return 0;
+    }
+
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent) {
+        View view;
+
+        if (convertView == null) {
+            LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            view = inflater.inflate(R.layout.item_hike, null);
+        }
+        else {
+            view = convertView;
+        }
+
+        TextView titleView = (TextView) view.findViewById(R.id.hike_list_title);
+        TextView subtitleView = (TextView) view.findViewById(R.id.hike_list_subtitle);
+        ImageView iconView = (ImageView) view.findViewById(R.id.hike_list_icon);
 
         titleView.setText(navItems.get(position).title);
         subtitleView.setText(navItems.get(position).subtitle);
@@ -99,6 +153,8 @@ public class MainActivity extends AppCompatActivity {
     private NavigationView drawerPane;
     private ArrayList<NavItem> navItems;
     private DrawerListAdapter drawerAdapter;
+    private Intent locationIntent;
+    private Fragment fragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,9 +162,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         // Create the Hiking manager
-        hikeManager = new HikeManager();
+        hikeManager = new HikeManager(10000);
 
-        // Create the drawer layout
+        // Find the drawer layout
         drawerLayout = (DrawerLayout) findViewById(R.id.main_layout);
 
         // Create the menu list
@@ -120,7 +176,7 @@ public class MainActivity extends AppCompatActivity {
         navItems.add(new NavItem("Map", "Want to find u arse", R.drawable.ic_map));
         navItems.add(new NavItem("Settings", "Wanna set dat boi", R.drawable.ic_settings));
 
-        // Populate the Navigtion Drawer with options
+        // Populate the NavigationView with options
         drawerPane = (NavigationView) findViewById(R.id.drawer_panel);
         drawerList = (ListView) findViewById(R.id.nav_list);
         drawerAdapter = new DrawerListAdapter(this, navItems);
@@ -132,7 +188,7 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setIcon(R.drawable.ic_menu);
 
-        // Drawer item click listeners
+        // Drawer item click listeners to open menu on click
         drawerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -148,13 +204,17 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        // Start the location service
+        this.registerReceiver(receiver, new IntentFilter(LocationService.SERVICE));
+        locationIntent = new Intent(this, LocationService.class);
+        this.startService(locationIntent);
+
+        // Select home at startup
         selectItemFromDrawer(0);
     }
 
     private void selectItemFromDrawer(int position) {
-        Fragment fragment;
-        FragmentManager fragmentManager = getFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
 
         switch(navItems.get(position).title) {
             case "Compass":
@@ -183,5 +243,52 @@ public class MainActivity extends AppCompatActivity {
         toolbar.setTitle(navItems.get(position).title);
         drawerList.setItemChecked(position, true);
         drawerLayout.closeDrawer(drawerPane);
+    }
+
+    private BroadcastReceiver receiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Bundle b = intent.getExtras();
+
+            if(b != null) {
+                hikeManager.addHikePoint(
+                        b.getFloat(LocationService.LATITUDE),
+                        b.getFloat(LocationService.LONGITUDE)
+                );
+                Log.v("MAIN","LOCATION");
+
+                // If we are on the map screen
+                if(fragment.getClass() == MapsFragment.class) {
+                    // Draw points
+                    ((MapsFragment) fragment).drawPoints(hikeManager.getPoints());
+                }
+            }
+        }
+    };
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        this.unregisterReceiver(receiver);
+        this.stopService(locationIntent);
+    }
+
+    @Override
+    public void onBackPressed() {
+        new AlertDialog.Builder(this)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setTitle("Closing Extremz Hick3r")
+                .setMessage("Are you sure you want to close the hike without saving?")
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener()
+                {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        hikeManager.saveHike(MainActivity.this);
+                        finish();
+                    }
+
+                })
+                .setNegativeButton("No", null)
+                .show();
     }
 }

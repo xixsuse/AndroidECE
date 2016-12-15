@@ -2,13 +2,8 @@ package extremzhick3r.fragment;
 
 import android.Manifest;
 import android.app.Fragment;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.pm.PackageManager;
-import android.location.Location;
-import android.location.LocationManager;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.view.LayoutInflater;
@@ -19,48 +14,32 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
+
+import org.json.JSONArray;
+import org.json.JSONException;
 
 import extremzhick3r.R;
-import extremzhick3r.services.LocationService;
 
 
 public class MapsFragment extends Fragment implements OnMapReadyCallback {
 
-    MapView mapView;
+    private MapView mapView;
     private GoogleMap map;
-    private Intent locationIntent;
-    private Location here;
+    private Polyline route;
 
     public MapsFragment() {}
-
-    private BroadcastReceiver receiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            Bundle b = intent.getExtras();
-
-            if(b != null) {
-                here.setLatitude(b.getFloat(LocationService.LATITUDE));
-                here.setLongitude(b.getFloat(LocationService.LONGITUDE));
-            }
-        }
-    };
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
 
-        here = new Location(LocationManager.GPS_PROVIDER);
-
-        this.getActivity().registerReceiver(receiver, new IntentFilter(
-                LocationService.SERVICE));
-        locationIntent = new Intent(this.getActivity(), LocationService.class);
-        this.getActivity().startService(locationIntent);
-
         View rootView = inflater.inflate(R.layout.fragment_maps, container, false);
 
         mapView = (MapView) rootView.findViewById(R.id.map_view);
         mapView.onCreate(savedInstanceState);
-        mapView.onResume(); // needed to get the map to display immediately
 
         try {
             MapsInitializer.initialize(getActivity().getApplicationContext());
@@ -116,5 +95,23 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
         // For zooming automatically to the location of the marker
         //CameraPosition cameraPosition = new CameraPosition.Builder().target(sydney).zoom(12).build();
         //map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+    }
+
+    public void drawPoints(JSONArray points) {
+        int length = points.length();
+        LatLng[] latLngs = new LatLng[length];
+
+        try {
+            for(int i=0, j=length; i<j; i++) {
+                latLngs[i] = new LatLng(
+                        points.getJSONArray(i).getDouble(0),
+                        points.getJSONArray(i).getDouble(1)
+                );
+            }
+        }
+        catch (JSONException e) { e.printStackTrace(); }
+
+        map.clear();
+        map.addPolyline(new PolylineOptions().add(latLngs).width(5).color(Color.RED));
     }
 }
