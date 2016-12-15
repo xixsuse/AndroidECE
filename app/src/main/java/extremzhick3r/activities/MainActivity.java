@@ -5,10 +5,12 @@ import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.support.design.widget.NavigationView;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +27,7 @@ import extremzhick3r.fragment.AltimeterFragment;
 import extremzhick3r.fragment.CompassFragment;
 import extremzhick3r.fragment.HomeFragment;
 import extremzhick3r.fragment.MapsFragment;
+import extremzhick3r.manager.HikeManager;
 
 class NavItem {
     String title;
@@ -89,6 +92,7 @@ class DrawerListAdapter extends BaseAdapter {
 
 public class MainActivity extends AppCompatActivity {
 
+    private HikeManager hikeManager;
     private Toolbar toolbar;
     private ListView drawerList;
     private DrawerLayout drawerLayout;
@@ -101,15 +105,20 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // Create the Hiking manager
+        hikeManager = new HikeManager();
+
         // Create the drawer layout
         drawerLayout = (DrawerLayout) findViewById(R.id.main_layout);
 
         // Create the menu list
         navItems = new ArrayList<NavItem>();
         navItems.add(new NavItem("Home", "O shit waddup", R.drawable.ic_home));
+        navItems.add(new NavItem("Your hikes", "See wat u done mate", R.drawable.ic_hike));
         navItems.add(new NavItem("Compass", "Where u goin'", R.drawable.ic_compass));
         navItems.add(new NavItem("Altimeter", "How high are u (420m)", R.drawable.ic_altimeter));
         navItems.add(new NavItem("Map", "Want to find u arse", R.drawable.ic_map));
+        navItems.add(new NavItem("Settings", "Wanna set dat boi", R.drawable.ic_settings));
 
         // Populate the Navigtion Drawer with options
         drawerPane = (NavigationView) findViewById(R.id.drawer_panel);
@@ -135,7 +144,7 @@ public class MainActivity extends AppCompatActivity {
         toolbar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("LOG_TAG", "navigation clicked");
+                drawerLayout.openDrawer(GravityCompat.START);
             }
         });
 

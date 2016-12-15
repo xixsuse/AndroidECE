@@ -8,10 +8,6 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.IBinder;
-import android.support.v4.content.LocalBroadcastManager;
-import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.widget.ImageView;
 
 public class CompassService extends Service  implements SensorEventListener {
     public static final String SERVICE = "extremzhick3r.compass";
