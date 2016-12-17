@@ -45,6 +45,10 @@
             android:name=".services.LocationService"
             android:enabled="true"
             android:exported="false" />
+        <service
+            android:name=".services.TimerService"
+            android:enabled="true"
+            android:exported="false" />
     </application>
 
 </manifest>

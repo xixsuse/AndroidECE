@@ -9,26 +9,20 @@ import android.support.v4.app.ActivityCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
-
 import org.json.JSONArray;
 import org.json.JSONException;
-
 import extremzhick3r.R;
-
 
 public class MapsFragment extends Fragment implements OnMapReadyCallback {
 
     private MapView mapView;
     private GoogleMap map;
-    private Polyline route;
 
     public MapsFragment() {}
 
@@ -80,24 +74,16 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
     public void onMapReady(GoogleMap googleMap) {
         map = googleMap;
 
-        // For showing a move to my location button
-        if (ActivityCompat.checkSelfPermission(MapsFragment.this.getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission(MapsFragment.this.getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            return;
+        try {
+            map.setMyLocationEnabled(true);
         }
-
-        map.setMyLocationEnabled(true);
-
-        // For dropping a marker at a point on the Map
-        //LatLng sydney = new LatLng(-34, 151);
-        //map.addMarker(new MarkerOptions().position(sydney).title("Marker Title").snippet("Marker Description"));
-
-        // For zooming automatically to the location of the marker
-        //CameraPosition cameraPosition = new CameraPosition.Builder().target(sydney).zoom(12).build();
-        //map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+        catch (SecurityException e) { e.printStackTrace(); }
     }
 
     public void drawPoints(JSONArray points) {
+        if(points == null)
+            return;
+
         int length = points.length();
         LatLng[] latLngs = new LatLng[length];
 
