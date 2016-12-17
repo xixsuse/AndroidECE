@@ -59,14 +59,12 @@ public class CompassService extends Service  implements SensorEventListener {
         else if (se.sensor == sensorMagneto)
             System.arraycopy(se.values, 0, mMagnetometerReading, 0, mMagnetometerReading.length);
 
-        if(mAccelerometerReading != null && mMagnetometerReading != null) {
-            // Update orientation
-            sensorManager.getRotationMatrix(mRotationMatrix, null, mAccelerometerReading, mMagnetometerReading);
-            sensorManager.getOrientation(mRotationMatrix, mOrientationAngles);
+        // Update orientation
+        SensorManager.getRotationMatrix(mRotationMatrix, null, mAccelerometerReading, mMagnetometerReading);
+        SensorManager.getOrientation(mRotationMatrix, mOrientationAngles);
 
-            // Rotate compass
-            publishResults((float) Math.toDegrees(-mOrientationAngles[0]));
-        }
+        // Rotate compass
+        publishResults((float) Math.toDegrees(-mOrientationAngles[0]));
     }
 
     private void publishResults(float azimuth) {

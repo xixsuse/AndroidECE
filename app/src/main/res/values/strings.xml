@@ -8,7 +8,5 @@
     <string name="altitude">Altitude (m):</string>
     <string name="copyright">Copyright© Extremzhik3r, 2016\nTous droits réservés</string>
     <string name="names">Quentin Cabanes &amp; Clément Raibaud</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="rick_ashley">Never gonna give you up, never gonna let you down\nNever gonna run around and desert you\nNever gonna make you cry, never gonna say goodbye\nNever gonna tell a lie and hurt you</string>
 </resources>

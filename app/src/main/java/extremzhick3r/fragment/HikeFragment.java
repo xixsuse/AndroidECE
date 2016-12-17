@@ -169,7 +169,7 @@ public class HikeFragment extends Fragment implements OnMapReadyCallback {
         LatLng[] latLngs = new LatLng[length];
 
         try {
-            for(int i=0, j=length; i<j; i++) {
+            for(int i = 0; i< length; i++) {
                 latLngs[i] = new LatLng(
                         points.getJSONArray(i).getDouble(0),
                         points.getJSONArray(i).getDouble(1)
@@ -188,6 +188,6 @@ public class HikeFragment extends Fragment implements OnMapReadyCallback {
         }
         catch (JSONException e) { e.printStackTrace(); }
 
-        this.getActivity().onBackPressed();
+        ((MainActivity)getActivity()).onBackPressed(true);
     }
 }

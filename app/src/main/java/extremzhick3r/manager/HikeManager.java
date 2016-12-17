@@ -63,7 +63,7 @@ public class HikeManager {
     }
 
     public static ArrayList<JSONObject> loadHikes(Activity a) {
-        ArrayList<JSONObject> allHikes = new ArrayList<JSONObject>();
+        ArrayList<JSONObject> allHikes = new ArrayList<>();
         File[] files = a.getFilesDir().listFiles(new FilenameFilter() {
             public boolean accept(File dir, String name) {
                 return (name.startsWith(FILENAME) && name.endsWith(EXTENSION));
@@ -87,7 +87,7 @@ public class HikeManager {
         try {
             int n;
             FileInputStream fis = a.openFileInput(fileName);
-            StringBuffer fileContent = new StringBuffer();
+            StringBuilder fileContent = new StringBuilder();
             byte[] buffer = new byte[1024];
 
             while ((n = fis.read(buffer)) != -1)
@@ -95,8 +95,7 @@ public class HikeManager {
 
             hike = new JSONObject(fileContent.toString());
         }
-        catch (JSONException e) { e.printStackTrace(); }
-        catch (IOException e) { e.printStackTrace(); }
+        catch (JSONException | IOException e) { e.printStackTrace(); }
 
         return hike;
     }

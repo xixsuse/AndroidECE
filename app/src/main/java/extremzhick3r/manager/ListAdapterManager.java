@@ -59,7 +59,7 @@ public class ListAdapterManager extends BaseAdapter {
 
     public ListAdapterManager(Context context, int layout, int title, int subtitle, int icon) {
         this.context = context;
-        this.navItems = new ArrayList<NavItemManager>();
+        this.navItems = new ArrayList<>();
         this.layout = layout;
         this.title = title;
         this.subtitle = subtitle;

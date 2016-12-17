@@ -10,6 +10,7 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.GravityCompat;
@@ -17,7 +18,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.content.Context;
@@ -30,6 +30,7 @@ import extremzhick3r.fragment.HikeFragment;
 import extremzhick3r.fragment.HikeListFragment;
 import extremzhick3r.fragment.HomeFragment;
 import extremzhick3r.fragment.MapsFragment;
+import extremzhick3r.fragment.SettingsFragment;
 import extremzhick3r.manager.HikeManager;
 import extremzhick3r.manager.ListAdapterManager;
 import extremzhick3r.services.LocationService;
@@ -79,6 +80,7 @@ public class MainActivity extends AppCompatActivity {
         // Create toolbar
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle("Home");
+
         setSupportActionBar(toolbar);
         getSupportActionBar().setIcon(R.drawable.ic_menu);
 
@@ -109,6 +111,10 @@ public class MainActivity extends AppCompatActivity {
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
 
         switch(drawerAdapter.getTitle(position)) {
+            case "Settings":
+                fragment = new SettingsFragment();
+                break;
+
             case "Your hikes":
                 fragment = new HikeListFragment();
                 break;
@@ -171,7 +177,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if(hikeManager.getState() && fragment.getClass() != HikeFragment.class)
+        if(hikeManager.getState())
             new AlertDialog.Builder(this)
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setTitle("You didn't stop your hike!")
@@ -189,6 +195,13 @@ public class MainActivity extends AppCompatActivity {
                 .show();
         else
             super.onBackPressed();
+    }
+
+    public void onBackPressed(boolean isSuper) {
+        if(isSuper)
+            super.onBackPressed();
+        else
+            onBackPressed();
     }
 
     public boolean getState() { return hikeManager.getState(); }
@@ -221,8 +234,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           String permissions[], int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
         switch (requestCode) {
             case APP_PERMISSION_REQUEST_LOCATION:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)

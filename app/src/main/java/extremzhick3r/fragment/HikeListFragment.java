@@ -72,9 +72,7 @@ public class HikeListFragment extends Fragment {
                         "Duration: " + TimerView.milliToTimer(hikes.get(i).getLong("time")),
                         m.toURL());
             }
-            catch (JSONException e) { e.printStackTrace(); }
-            catch (MalformedURLException e) { e.printStackTrace(); }
-            catch (NullPointerException e) { e.printStackTrace(); }
+            catch (JSONException| MalformedURLException | NullPointerException e) { e.printStackTrace(); }
         }
 
         listView.setAdapter(listAdapterManager);

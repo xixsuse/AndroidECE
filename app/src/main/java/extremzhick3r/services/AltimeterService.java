@@ -1,10 +1,8 @@
 package extremzhick3r.services;
 
-import android.Manifest;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -14,7 +12,6 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -34,7 +31,8 @@ public class AltimeterService extends Service implements SensorEventListener, Lo
     GoogleApiClient googleApiClient;
     LocationRequest locationRequest;
 
-    public AltimeterService() {}
+    public AltimeterService() {
+    }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -42,7 +40,7 @@ public class AltimeterService extends Service implements SensorEventListener, Lo
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
 
         sensorAlt = sensorManager.getDefaultSensor(Sensor.TYPE_PRESSURE);
-        if(sensorAlt != null)
+        if (sensorAlt != null)
             sensorManager.registerListener(this, sensorAlt, SensorManager.SENSOR_DELAY_UI);
         else {
             googleApiClient = new GoogleApiClient.Builder(this)
@@ -67,11 +65,13 @@ public class AltimeterService extends Service implements SensorEventListener, Lo
         throw new UnsupportedOperationException("Not yet implemented");
     }
 
-    @Override public void onAccuracyChanged(Sensor sensor, int accuracy) {}
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+    }
 
     @Override
     public void onSensorChanged(SensorEvent se) {
-        float altitude = sensorManager.getAltitude(SensorManager.PRESSURE_STANDARD_ATMOSPHERE, se.values[0]);
+        float altitude = SensorManager.getAltitude(SensorManager.PRESSURE_STANDARD_ATMOSPHERE, se.values[0]);
 
         publishResults(altitude);
     }
@@ -98,11 +98,18 @@ public class AltimeterService extends Service implements SensorEventListener, Lo
         try {
             LocationServices.FusedLocationApi.requestLocationUpdates(
                     googleApiClient, locationRequest, this);
+        } catch (SecurityException e) {
+            e.printStackTrace();
         }
-        catch (SecurityException e) { e.printStackTrace(); }
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
 
     }
 
-    @Override public void onConnectionSuspended(int i) {}
-    @Override public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {}
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
+    }
 }
